@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\FollowerController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReactionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Requests\TaskRequest;
 use App\Models\Task;
@@ -9,6 +10,9 @@ use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\ReactionCommentController;
+use App\Models\CommentReaction;
 
 Route::get('/', function () {
     return view('welcome');
@@ -17,7 +21,7 @@ Route::get('/', function () {
 Route::get('/user/{user}', [ProfileController::class, 'showProfile'])->name('UserProfile');
 
 Route::get('/dashboard', function () {
-    return view('dashboard', ['tasks' => Task::latest()->simplePaginate(20)]
+    return view('dashboard', ['tasks' => Task::inRandomOrder()->latest()->Paginate(20)]
   );
 
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -59,9 +63,15 @@ Route::put('/task/{task}/completedTask', [TaskController::class, 'completedTask'
 
 Route::post('/{user}/follow',[FollowerController::class,'follow'])->name('userfollow')->middleware('auth','verified');
 Route::post('/{user}/unfollow',[FollowerController::class,'unfollow'])->name('userunfollow')->middleware('auth','verified');
+Route::post('/reactions', [ReactionController::class, 'store'])->name('reactions.store')->middleware('auth','verified');;
 
-use App\Http\Controllers\CommentController;
 
-Route::post('/tasks/{task}/comments', [CommentController::class, 'store'])->middleware('auth','verified')->name('comments.store');
+    Route::post('/tasks/{task}/comments', [CommentController::class, 'store'])->middleware('auth','verified')->name('comments.store');
+    Route::post('/tasks/{task}/comments/{comment}/like', [ReactionCommentController::class, 'like'])->middleware('auth', 'verified')->name('comments.like');
+
+
+    Route::post('/tasks/{task}/likes', [ReactionController::class, 'like'])->name('task.like')->middleware('auth','verified');
+
+
 
 require __DIR__.'/auth.php';

@@ -99,4 +99,6 @@ class TaskController extends Controller
         $task->CompletedTask();
         return redirect()->back()->with('success', 'Task Completed');
     }
+
+
 }

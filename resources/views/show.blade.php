@@ -74,24 +74,27 @@
         @endif
 
         <!-- Like and Comment Section Styled like Instagram -->
-        <div class="task-interactions">
-            <div class="like-button">
-                <span class="like-icon">&#x2764;</span> <!-- Heart Icon for Like -->
-            </div>
-            <div class="comment-button">
-                <span class="comment-icon">&#9993;</span> <!-- Message Icon for Comment -->
-            </div>
-            <div class="share-button">
-                <span class="share-icon">&#x1f4e3;</span> <!-- Megaphone Icon for Share -->
-            </div>
+        <div class="task-like-section">
+            <form action="{{ route('task.like', $task) }}" method="POST" style="display: inline;">
+                @csrf
+                @php
+                    $userLiked = $task->likes->where('user_id', Auth::id())->first();
+                @endphp
+                <button type="submit" class="like-icon">
+                    <svg class="heart-icon {{ $userLiked ? 'liked' : '' }}" viewBox="0 0 24 24">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                </button>
+            </form>
+            <span class="like-counter">{{ $task->likes->count() }} {{ Str::plural('Like', $task->likes->count()) }}</span>
         </div>
 
         <!-- Comments Section -->
         <div class="comments-section">
             <div class="comment">
-                <p class="username">{{ $task->user->name }}</p>
-                <p class="comment-description">{{ $task->description }}</p>
-                <p class="comment-long-description">{{ $task->long_description }}</p>
+                <p class="post-user">{{ $task->user->name }}</p>
+                <p class="post-description">{{ $task->description }}</p>
+                <p class="post-long-description">{{ $task->long_description }}</p>
                 
                 
             </div>
@@ -107,6 +110,9 @@
         @foreach ($task->comments as $comment)
         <li class="comment-item">
             <div class="comment-header">
+                <div class="commenter-picture">
+                    <img src="{{ $comment->user->profile_picture ? Storage::url($comment->user->profile_picture) : 'https://via.placeholder.com/50' }}" alt="Commenter Picture">
+                </div>
                 <strong class="comment-author">
                     {{ $comment->user->name }}
                     <!-- Check if the user is the author of the task -->
@@ -116,7 +122,23 @@
                 </strong>
                 <small class="comment-time">{{ $comment->created_at->diffForHumans() }}</small>
             </div>
-            <p class="comment-content">{{ $comment->content }}</p>
+            <div class="comment-content-wrapper">
+                <p class="comment-content">{{ $comment->content }}</p>
+                <div class="comment-like-section">
+                    <form action="{{ route('comments.like', ['task' => $task->id, 'comment' => $comment->id]) }}" method="POST" style="display: inline;">
+                        @csrf
+                        @php
+                            $userLiked = $comment->commentReactions->where('user_id', Auth::id())->first();
+                        @endphp
+                        <button type="submit" class="like-icon">
+                            <svg class="heart-icon {{ $userLiked ? 'liked' : '' }}" viewBox="0 0 24 24">
+                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                            </svg>
+                        </button>
+                        <span class="comment-like-counter">{{ $comment->commentReactions->count() }} {{ Str::plural('Like', $comment->commentReactions->count()) }}</span>
+                    </form>
+                </div>
+            </div>
         </li>
         @endforeach
     </ul>
@@ -390,12 +412,13 @@ body {
 /* Comments Section */
 .comments-section {
     margin-top: 20px;
-    padding: 0 10px;
+    padding: 0 10px;    
 }
 
 .comment {
     margin-top: 10px;
-    text-align: left; /* Align all comment text to the left */
+    text-align: left;
+     /* Align all comment text to the left */
 }
 
 .username {
@@ -548,20 +571,40 @@ body {
 
 .comment-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 5px;
+    gap: 10px;
 }
 
-.comment-author {
+    .commenter-picture {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+
+    .commenter-picture img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .comment-author {
     font-size: 14px;
     font-weight: bold;
     color: #fff;
+    margin-left: 10px; /* Adds space between picture and text */
 }
 
 .comment-time {
     font-size: 12px;
     color: #777;
+}
+
+.comment-content-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
 }
 
 .comment-content {
@@ -668,6 +711,66 @@ body {
     display: block;
 }
 
+/* Like Button */
+.like-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    font-size: 24px;
+    color: #fff;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.heart-icon {
+    fill: #777;
+    width: 24px;
+    height: 24px;
+    transition: fill 0.3s ease, transform 0.3s ease;
+}
+
+.heart-icon.liked {
+    fill: #F44336; /* Red when liked */
+}
+
+.like-icon:hover .heart-icon {
+    transform: scale(1.2);
+    fill: #F44336;
+}
+
+.task-like-section {
+    display: flex;
+    justify-content: flex-start; /* Move to the left side */
+    align-items: center;
+    gap: 5px;
+}
+
+.like-counter {
+    font-size: 12px;
+    color: #ccc;
+    position: relative;
+    top: -8px; /* Move the like counter 3 pixels higher */
+}
+
+.comment-content-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.comment-like-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.comment-like-counter {
+    font-size: 12px;
+    color: #ccc;
+    margin-top: 5px;
+    display: block;
+}
 
 </style>
 
@@ -704,6 +807,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+            indicator.classList.toggle('active', index === currentIndex);
+        });
+    }
+
+    function createIndicators() {
+        carouselItems.forEach((_, index) => {
+            const indicator = document.createElement('div');
+            indicator.classList.add('carousel-indicator');
+            if (index === 0) indicator.classList.add('active');
+            indicator.addEventListener('click', () => {
+                currentIndex = index;
+                updateCarousel();
+            });
+            indicatorsContainer.appendChild(indicator);
+        });
+    }
+
     prevButton.addEventListener('click', () => {
         currentIndex = (currentIndex - 1 + carouselItems.length) % carouselItems.length;
         updateCarousel();
@@ -716,8 +836,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     createIndicators();
     updateCarousel();
-});
+
 </script>
 
 </style>
-

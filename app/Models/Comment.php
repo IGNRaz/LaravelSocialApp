@@ -24,4 +24,9 @@ class Comment extends Model
     {
         return $this->belongsTo(Task::class);
     }
+
+    public function commentReactions()
+    {
+        return $this->hasMany(CommentReaction::class);
+    }
 }

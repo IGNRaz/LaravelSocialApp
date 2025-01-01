@@ -41,5 +41,15 @@ public function comments()
 {
     return $this->hasMany(Comment::class);
 }
+public function likes()
+{
+    return $this->hasMany(Reaction::class);
+}
+
+public function commentLikes()
+{
+    return $this->hasMany(CommentReaction::class);
+
+}
 
 }

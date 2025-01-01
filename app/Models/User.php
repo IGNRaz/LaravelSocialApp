@@ -65,6 +65,19 @@ class User extends Authenticatable
     public function follows(User $user){ 
         return $this->following()->where('user_id', $user->id)->exists();
     }
+
+    public function reaction(){
+        return $this->belongsToMany(User::class, 'reaction_users', 'reaction_id', 'user_id')->withTimestamps();
+    }
+
+    public function reactors(){
+        return $this->belongsToMany(User::class, 'reaction_users', 'user_id', 'reaction_id')->withTimestamps();
+
+    }
+
+    public function reactions(User $user){ 
+        return $this->reaction()->where('user_id', $user->id)->exists();
+    }
     public function tasks()
     {
         return $this->hasMany(Task::class);
@@ -73,5 +86,14 @@ class User extends Authenticatable
 {
     return $this->hasMany(Comment::class);
 }
+public function likes()
+{
+    return $this->hasMany(Reaction::class);
+}
 
+public function commentLikes()
+{
+    return $this->hasMany(CommentReaction::class);
+
+}
 }

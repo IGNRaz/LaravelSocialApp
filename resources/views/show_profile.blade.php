@@ -20,17 +20,26 @@
                 <span>{{ $user->followers()->count() }}</span> Followers
             </div>
             @if(Auth::id() != $user->id)
-                @if(Auth::user()->follows($user))
-                    <form method="POST" action="{{ route('userunfollow', $user->id) }}">
-                        @csrf
-                        <button type="submit" class="unfollow-button">Unfollow</button>
-                    </form>
-                @else
-                    <form method="POST" action="{{ route('userfollow', $user->id) }}">
-                        @csrf
-                        <button type="submit" class="follow-button">Follow</button>
-                    </form>
-                @endif
+                <div class="action-buttons">
+                    @if(Auth::user()->follows($user))
+                        <form method="POST" action="{{ route('userunfollow', $user->id) }}">
+                            @csrf
+                            <button type="submit" class="unfollow-button">
+                                Unfollow
+                            </button>
+                        </form>
+                    @else
+                        <form method="POST" action="{{ route('userfollow', $user->id) }}">
+                            @csrf
+                            <button type="submit" class="follow-button">
+                                Follow
+                            </button>
+                        </form>
+                    @endif
+                    <button class="message-button">
+                        Messages
+                    </button>
+                </div>
             @endif
         </div>
     @else
@@ -48,17 +57,11 @@
                         <img src="{{Storage::url($task->image) }}" alt="Task Picture" class="post-picture">
                     @elseif($task->video)
                         <video class="post-picture" controls>
-                            <source src="{{ Storage::url($task->video )}}" typae="video/mp4">
+                            <source src="{{ Storage::url($task->video )}}" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
                     @endif
                 </div>
-                <p class="post-name">{{ $task->title }}</p>
-                @if($task->video)
-                    <p class="post-type-label">Video Post</p>
-                @else
-                    <p class="post-type-label">Image Post</p>
-                @endif
             </a>
         @endforeach
     @else
@@ -137,43 +140,53 @@ body {
 }
 
 .follow-button,
-.unfollow-button {
-    display: inline-block;
-    padding: 8px 20px;
+.unfollow-button,
+.message-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 8px 20px; 
     font-size: 14px;
     font-weight: bold;
     text-decoration: none;
     border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    border: 1px solid transparent;
+    background-color: transparent;
+    color: rgba(255, 255, 255, 0.8);
+    border-color: rgba(255, 255, 255, 0.8);
+    width: 100px; 
+    height: 40px; 
+    text-align: center;
+    box-sizing: border-box;
 }
 
-.follow-button {
-    background-color: #0095f6;
-    color: white;
+.follow-button:hover,
+.unfollow-button:hover,
+.message-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 1);
+    transform: scale(1.05);
 }
 
-.follow-button:hover {
-    background-color: #007bb5;
-}
-
-.unfollow-button {
-    background-color: #dc3545;
-    color: white;
-}
-
-.unfollow-button:hover {
-    background-color: #bd2130;
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 10px;
 }
 
 /* Post Grid Styles */
 .user-posts {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 2px; /* Reduced gap between posts */
     padding: 20px;
     margin: 0 auto;
     max-width: 500px;
+    justify-content: center; /* Center the posts */
 }
 
 .post {
@@ -190,11 +203,14 @@ body {
 
 .post-picture-container {
     width: 100%;
-    height: 150px;
-    overflow: hidden;
+    padding-top: 100%; /* 1:1 Aspect Ratio */
+    position: relative;
 }
 
 .post-picture {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -202,25 +218,13 @@ body {
     background-color: #333;
 }
 
-.post-name {
+video.post-picture {
     position: absolute;
-    bottom: 5px;
-    left: 5px;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    font-size: 14px;
-    font-weight: bold;
-    padding: 2px 6px;
-    border-radius: 3px;
-}
-
-.post-type-label {
-    font-size: 12px;
-    color: #fff;
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 2px 6px;
-    margin-top: 5px;
-    border-radius: 3px;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 /* Mobile responsiveness */
@@ -286,6 +290,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     homeLink.addEventListener('mouseout', function() {
         this.style.transform = 'scale(1)';
+    });
+
+    // Ensure posted pictures and videos take the correct size
+    const postPictures = document.querySelectorAll('.post-picture');
+    postPictures.forEach(picture => {
+        picture.style.width = '150px';
+        picture.style.height = '150px';
     });
 });
 </script>

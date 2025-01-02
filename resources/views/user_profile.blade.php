@@ -54,11 +54,7 @@
                     @endif
                 </div>
                 <p class="post-name">{{ $task->title }}</p>
-                @if($task->video)
-                    <p class="post-type-label">Video Post</p>
-                @else
-                    <p class="post-type-label">Image Post</p>
-                @endif
+                
             </a>
         @endforeach
     @else

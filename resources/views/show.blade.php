@@ -486,12 +486,11 @@ body {
 
 .carousel-item img, 
 .carousel-item video {
-    width: auto;
-    max-height: 500px;
-    max-width: 100%;
-    margin: 0 auto;
-    border-radius: 8px;
-    object-fit: cover;
+    width: 100% !important; /* Ensure the media takes the full width of the container */
+    height: auto !important; /* Maintain aspect ratio */
+    max-height: 500px !important; /* Set a maximum height */
+    border-radius: 8px !important;
+    object-fit: cover !important; /* Ensure the media covers the container */
 }
 
 .carousel-navigation {

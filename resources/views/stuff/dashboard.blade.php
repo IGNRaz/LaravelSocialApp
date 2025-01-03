@@ -5,7 +5,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class= #1e1e1e; > <!-- Dark gray background -->
                 <div class="p-6 text-white"> <!-- Pure white text for contrast -->
-                  @include('index')
+                  @include('stuff.index')
                 </div>
             </div>
         </div>

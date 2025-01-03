@@ -1,5 +1,5 @@
 @extends('layouts.layouts')
 
 @section('content')
- @include('form')
+ @include('stuff.form')
 @endsection

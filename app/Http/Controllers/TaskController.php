@@ -15,7 +15,7 @@ class TaskController extends Controller
 
     public function create()
     {
-        return view('create');
+        return view('stuff.create');
     }
 
     public function edit(Task $task)
@@ -23,7 +23,7 @@ class TaskController extends Controller
         if ($task->user_id != Auth::id()) {
             abort(403);
         }
-        return view('edit', ['task' => $task]);
+        return view('stuff.edit', ['task' => $task]);
     }
 
     public function store(TaskRequest $request)
@@ -91,7 +91,7 @@ class TaskController extends Controller
 
     public function show(Task $task)
     {
-        return view('show', ['task' => $task, 'user_name' => $task->user->name]);
+        return view('stuff.show', ['task' => $task, 'user_name' => $task->user->name]);
     }
 
     public function completedTask(Task $task)

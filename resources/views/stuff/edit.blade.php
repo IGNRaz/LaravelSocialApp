@@ -1,5 +1,5 @@
 @extends('layouts.layouts')
 
 @section('content')
- @include('form',['task'=>$task])
+ @include('stuff.form',['task'=>$task])
 @endsection

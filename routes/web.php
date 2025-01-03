@@ -26,7 +26,7 @@ Route::get('/', function () {
 Route::get('/user/{user}', [ProfileController::class, 'showProfile'])->name('UserProfile');
 
 Route::get('/dashboard', function () {
-    return view('dashboard', ['tasks' => Task::inRandomOrder()->latest()->Paginate(20)]
+    return view('stuff.dashboard', ['tasks' => Task::inRandomOrder()->latest()->Paginate(20)]
   );
 
 })->middleware(['auth', 'verified'])->name('dashboard');

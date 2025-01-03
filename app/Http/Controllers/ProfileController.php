@@ -74,7 +74,7 @@ class ProfileController extends Controller
     public function ShowUserProfile()
     {
         $user = Auth::user();
-        return view('user_profile', compact('user'));
+        return view('stuff.user_profile', compact('user'));
     }
 
     public function showProfile($id)
@@ -85,7 +85,7 @@ class ProfileController extends Controller
             return redirect()->back()->with('error', 'User not found.');
         }
 
-        return view('show_profile', compact('user'));
+        return view('stuff.show_profile', compact('user'));
     }
 
 }

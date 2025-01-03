@@ -141,48 +141,55 @@
               <form method="POST" action="{{ route('login') }}">
                 @csrf
 
-                <!-- Email Address -->
-                <div class="mb-3">
-                  <label for="email" class="form-label">Email</label>
-                  <input
-                    type="email"
-                    class="form-control"
-                    id="email"
-                    name="email"
-                    placeholder="Enter your email"
-                    :value="old('email')"
-                    required
-                    autofocus
-                    autocomplete="username"
-                  />
-                  <x-input-error :messages="$errors->get('email')" class="mt-2" />
-                </div>
-
-                <!-- Password -->
-                <div class="mb-3 form-password-toggle">
-                  <div class="d-flex justify-content-between">
-                    <label class="form-label" for="password">Password</label>
-                    @if (Route::has('password.request'))
-                      <a href="{{ route('password.request') }}">
-                        <small>Forgot your password?</small>
-                      </a>
-                    @endif
+                
+              
+                  <!-- Email or Username -->
+                  <div class="mb-3">
+                      <label for="login" class="form-label">Email or Username</label>
+                      <input
+                          type="text"
+                          class="form-control"
+                          id="login"
+                          name="login"
+                          placeholder="Enter your email or username"
+                          :value="old('login')"
+                          required
+                          autofocus
+                          autocomplete="username"
+                      />
+                      <x-input-error :messages="$errors->get('login')" class="mt-2" />
                   </div>
-                  <div class="input-group input-group-merge">
-                    <input
-                      type="password"
-                      id="password"
-                      class="form-control"
-                      name="password"
-                      placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
-                      required
-                      autocomplete="current-password"
-                    />
-                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+              
+                  <!-- Password -->
+                  <div class="mb-3 form-password-toggle">
+                      <div class="d-flex justify-content-between">
+                          <label class="form-label" for="password">Password</label>
+                          @if (Route::has('password.request'))
+                              <a href="{{ route('password.request') }}">
+                                  <small>Forgot your password?</small>
+                              </a>
+                          @endif
+                      </div>
+                      <div class="input-group input-group-merge">
+                          <input
+                              type="password"
+                              id="password"
+                              class="form-control"
+                              name="password"
+                              placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                              required
+                              autocomplete="current-password"
+                          />
+                          <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                      </div>
+                      <x-input-error :messages="$errors->get('password')" class="mt-2" />
                   </div>
-                  <x-input-error :messages="$errors->get('password')" class="mt-2" />
-                </div>
-
+              
+                  <!-- Remember Me -->
+                 
+              
+                 
+              
                 <!-- Remember Me -->
                 <div class="mb-3">
                   <div class="form-check">

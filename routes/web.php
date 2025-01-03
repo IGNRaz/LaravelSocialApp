@@ -12,7 +12,11 @@ use App\Models\User;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ReactionCommentController;
+use App\Livewire\Chat\CreateChat;
+use App\Livewire\Chat\Main;
+
 use App\Models\CommentReaction;
+use PHPUnit\Framework\Attributes\Group;
 
 Route::get('/', function () {
     return view('welcome');
@@ -31,6 +35,12 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/userprofile', [ProfileController::class,'ShowUserProfile'])->name('myprofile');
+});
+
+Route::middleware(['auth','verified'])->group(function(){
+    Route::get('/people', App\Livewire\Chat\CreateChat::class)->name('users');
+    Route::get('/chat/{key?}', App\Livewire\Chat\Main::class)->name('chat');
+    Route::post('/chat/start/{user}', [App\Livewire\Chat\CreateChat::class, 'handleUserClick'])->name('chat.start');
 });
 
 Route::get('/task', [TaskController::class, 'index']);
@@ -65,13 +75,8 @@ Route::post('/{user}/follow',[FollowerController::class,'follow'])->name('userfo
 Route::post('/{user}/unfollow',[FollowerController::class,'unfollow'])->name('userunfollow')->middleware('auth','verified');
 Route::post('/reactions', [ReactionController::class, 'store'])->name('reactions.store')->middleware('auth','verified');;
 
-
-    Route::post('/tasks/{task}/comments', [CommentController::class, 'store'])->middleware('auth','verified')->name('comments.store');
-    Route::post('/tasks/{task}/comments/{comment}/like', [ReactionCommentController::class, 'like'])->middleware('auth', 'verified')->name('comments.like');
-
-
-    Route::post('/tasks/{task}/likes', [ReactionController::class, 'like'])->name('task.like')->middleware('auth','verified');
-
-
+Route::post('/tasks/{task}/comments', [CommentController::class, 'store'])->middleware('auth','verified')->name('comments.store');
+Route::post('/tasks/{task}/comments/{comment}/like', [ReactionCommentController::class, 'like'])->middleware('auth', 'verified')->name('comments.like');
+Route::post('/tasks/{task}/likes', [ReactionController::class, 'like'])->name('task.like')->middleware('auth','verified');
 
 require __DIR__.'/auth.php';

@@ -36,10 +36,13 @@
                             </button>
                         </form>
                     @endif
-                    <button class="message-button">
-                        Messages
-                    </button>
-                </div>
+                   <form method="post" action="{{route('chat.start', ['user' => $user->id])}}">
+                        @csrf
+                        <button type="submit" class="message-button">
+                            Message
+                        </button>
+
+                   </form>
             @endif
         </div>
     @else

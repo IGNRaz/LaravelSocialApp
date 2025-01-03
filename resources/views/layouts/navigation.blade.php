@@ -176,7 +176,7 @@
             <div class="nav-links" id="navLinks">
                 <a href="{{ route('dashboard') }}">Explore</a>
                 <a href="{{ route('CreateATask') }}">Create</a>
-                <a href="/messages">Messages</a>
+                <a href={{route('chat')}}>Messages</a>
                 
                 <!-- Profile -->
                 <a href="{{ route('myprofile') }}" class="nav-profile">

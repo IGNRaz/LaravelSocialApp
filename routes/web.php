@@ -16,6 +16,7 @@ use App\Livewire\Chat\CreateChat;
 use App\Livewire\Chat\Main;
 
 use App\Models\CommentReaction;
+use GuzzleHttp\Middleware;
 use PHPUnit\Framework\Attributes\Group;
 
 Route::get('/', function () {
@@ -35,6 +36,10 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/userprofile', [ProfileController::class,'ShowUserProfile'])->name('myprofile');
+    Route::post('/{user}/follow',[FollowerController::class,'follow'])->name('userfollow');
+Route::post('/{user}/unfollow',[FollowerController::class,'unfollow'])->name('userunfollow');
+Route::post('/reactions', [ReactionController::class, 'store'])->name('reactions.store');
+
 });
 
 Route::middleware(['auth','verified'])->group(function(){
@@ -43,40 +48,30 @@ Route::middleware(['auth','verified'])->group(function(){
     Route::post('/chat/start/{user}', [App\Livewire\Chat\CreateChat::class, 'handleUserClick'])->name('chat.start');
 });
 
-Route::get('/task', [TaskController::class, 'index']);
+Route::middleware(['auth','verified'])->group(function(){
 
-Route::get('/task/create', [TaskController::class, 'create'])
-    ->middleware(['auth', 'verified'])
-    ->name('CreateATask');
+    Route::get('/task', [TaskController::class, 'index']);
 
-Route::get('/task/{task}/edit', [TaskController::class, 'edit'])
-    ->middleware(['auth', 'verified'])
-    ->name('TaskShow');
+    Route::get('/task/create', [TaskController::class, 'create'])->name('CreateATask');
+    
+    Route::get('/task/{task}/edit', [TaskController::class, 'edit'])->name('TaskShow');
+    
+    Route::post('/task', [TaskController::class, 'store'])->name('StoreingTask');
+    
+    Route::put('/task/{task}', [TaskController::class, 'update'])->name('EditingTask');
+    
+    Route::delete('/task/{task}', [TaskController::class, 'destroy'])->name('DeleteTask');
+    
+    Route::get('/task/{task}', [TaskController::class, 'show'])->name('TaskShow');
+    
+    Route::put('/task/{task}/completedTask', [TaskController::class, 'completedTask'])->name('CompletedTask');
 
-Route::post('/task', [TaskController::class, 'store'])
-    ->middleware(['auth', 'verified'])
-    ->name('StoreingTask');
+    Route::post('/tasks/{task}/comments', [CommentController::class, 'store'])->name('comments.store');
 
-Route::put('/task/{task}', [TaskController::class, 'update'])
-    ->name('EditingTask');
+    Route::post('/tasks/{task}/comments/{comment}/like', [ReactionCommentController::class, 'like'])->name('comments.like');
 
-Route::delete('/task/{task}', [TaskController::class, 'destroy'])
-    ->name('DeleteTask');
+    Route::post('/tasks/{task}/likes', [ReactionController::class, 'like'])->name('task.like');
 
-Route::get('/task/{task}', [TaskController::class, 'show'])
-    ->middleware(['auth', 'verified'])
-    ->name('TaskShow');
-
-Route::put('/task/{task}/completedTask', [TaskController::class, 'completedTask'])
-    ->middleware(['auth', 'verified'])
-    ->name('CompletedTask');
-
-Route::post('/{user}/follow',[FollowerController::class,'follow'])->name('userfollow')->middleware('auth','verified');
-Route::post('/{user}/unfollow',[FollowerController::class,'unfollow'])->name('userunfollow')->middleware('auth','verified');
-Route::post('/reactions', [ReactionController::class, 'store'])->name('reactions.store')->middleware('auth','verified');;
-
-Route::post('/tasks/{task}/comments', [CommentController::class, 'store'])->middleware('auth','verified')->name('comments.store');
-Route::post('/tasks/{task}/comments/{comment}/like', [ReactionCommentController::class, 'like'])->middleware('auth', 'verified')->name('comments.like');
-Route::post('/tasks/{task}/likes', [ReactionController::class, 'like'])->name('task.like')->middleware('auth','verified');
+});
 
 require __DIR__.'/auth.php';

@@ -20,7 +20,7 @@ use GuzzleHttp\Middleware;
 use PHPUnit\Framework\Attributes\Group;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('stuff.welcome');
 })->middleware('guest');
 
 Route::get('/user/{user}', [ProfileController::class, 'showProfile'])->name('UserProfile');
@@ -50,27 +50,27 @@ Route::middleware(['auth','verified'])->group(function(){
 
 Route::middleware(['auth','verified'])->group(function(){
 
-    Route::get('/task', [TaskController::class, 'index']);
+    Route::get('/post', [TaskController::class, 'index']);
 
-    Route::get('/task/create', [TaskController::class, 'create'])->name('CreateATask');
+    Route::get('/post/create', [TaskController::class, 'create'])->name('CreateATask');
     
-    Route::get('/task/{task}/edit', [TaskController::class, 'edit'])->name('TaskShow');
+    Route::get('/post/{task}/edit', [TaskController::class, 'edit'])->name('TaskShow');
     
-    Route::post('/task', [TaskController::class, 'store'])->name('StoreingTask');
+    Route::post('/post', [TaskController::class, 'store'])->name('StoreingTask');
     
-    Route::put('/task/{task}', [TaskController::class, 'update'])->name('EditingTask');
+    Route::put('/post/{task}', [TaskController::class, 'update'])->name('EditingTask');
     
-    Route::delete('/task/{task}', [TaskController::class, 'destroy'])->name('DeleteTask');
+    Route::delete('/post/{task}', [TaskController::class, 'destroy'])->name('DeleteTask');
     
-    Route::get('/task/{task}', [TaskController::class, 'show'])->name('TaskShow');
+    Route::get('/post/{task}', [TaskController::class, 'show'])->name('TaskShow');
     
-    Route::put('/task/{task}/completedTask', [TaskController::class, 'completedTask'])->name('CompletedTask');
+    Route::put('/post/{task}/completedTask', [TaskController::class, 'completedTask'])->name('CompletedTask');
 
-    Route::post('/tasks/{task}/comments', [CommentController::class, 'store'])->name('comments.store');
+    Route::post('/posts/{task}/comments', [CommentController::class, 'store'])->name('comments.store');
 
-    Route::post('/tasks/{task}/comments/{comment}/like', [ReactionCommentController::class, 'like'])->name('comments.like');
+    Route::post('/posts/{task}/comments/{comment}/like', [ReactionCommentController::class, 'like'])->name('comments.like');
 
-    Route::post('/tasks/{task}/likes', [ReactionController::class, 'like'])->name('task.like');
+    Route::post('/posts/{task}/likes', [ReactionController::class, 'like'])->name('task.like');
 
 });
 

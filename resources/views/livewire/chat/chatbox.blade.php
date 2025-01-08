@@ -9,7 +9,7 @@
             </div>
 
             <div class="img_container">
-                <img src="https://ui-avatars.com/api/?name={{ $receiverInstance->name }}" alt="">
+                <img src="{{ Storage::url($receiverInstance->profile_picture) }}">
 
             </div>
 
